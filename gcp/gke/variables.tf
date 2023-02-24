@@ -1,22 +1,27 @@
 
 variable "name" {
+  description = "Name of cluster to create"
   type = string
 }
 
 variable "region" {
+  description = "GCP Region for deployment"
   type = string
 }
 
 variable "project" {
+  description = "GCP Project"
   type = string
 }
 
 variable "enable_autopilot" {
+  description = "Enable GKE Autopilot (default false)"
   type = bool
-  default = true
+  default = false
 }
 
 variable "authorized_networks" {
+  description = "Map of networks to access control plane."
   type = map(string)
   default = {
     "Harness Office 1" = "192.195.83.11/32"

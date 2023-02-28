@@ -14,6 +14,5 @@ resource "google_redis_instance" "this" {
   region                    = var.redis_region
   location_id               = var.redis_location_id
   alternative_location_id   = var.redis_alternative_location_id
-  replica_count             = var.redis_replica_count
   redis_version             = var.redis_version
 }

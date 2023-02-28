@@ -22,7 +22,3 @@ output "current_location_id" {
  description = "The current zone where the Redis endpoint is placed."
  value = google_redis_instance.this.location_id
 }
-
-output "project_id" {
-  value = var.project_id
-}

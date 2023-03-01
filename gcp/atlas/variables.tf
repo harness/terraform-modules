@@ -76,18 +76,16 @@ locals {
   cloud_provider = "GCP"
 }
 
-# to remove and replace with HSM post test
 variable "atlas_public_key" {
   description = "The project id where cluster need to be created"
   type        = string
-  default     = "wcwdwbsg"
+  default     = "xxx"
 }
 
-# to remove and replace with HSM post test
 variable "atlas_private_key" {
   description = "The project id where cluster need to be created"
   type        = string
-  default     = "9907b31f-7461-4746-bccd-ed07fb6a5bc2"
+  default     = "xxx"
 }
 
 variable "atlas_project_name" {

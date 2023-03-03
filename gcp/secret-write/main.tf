@@ -11,6 +11,16 @@ resource "google_project_service" "secretmanager" {
 resource "google_secret_manager_secret" "this" {
     secret_id = var.name 
     labels = var.labels   
+    replication {
+    user_managed {
+      replicas {
+        location = "us-central1"
+      }
+      replicas {
+        location = "us-east1"
+      }
+    }
+  }
 }
 
 resource "google_secret_manager_secret_version" "this" {

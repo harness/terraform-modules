@@ -1,15 +1,17 @@
+variable "gcp_project" {
+  type = string
+}
+
+variable "db_region" {
+  type = string
+  default = "us-west1"
+}
+
 variable "atlas_region" {
-  description = "The AWS region-name that the cluster will be deployed on"
+  description = "The GCP region-name that the cluster will be deployed on"
   type        = string
   default     = "CENTRAL_US"
 }
-
-variable "cluster_name" {
-  description = "The cluster name"
-  type        = string
-  default     = "test-cluster"
-}
-
 variable "instance_type" {
   description = "The Atlas instance-type name"
   type        = string
@@ -19,7 +21,7 @@ variable "instance_type" {
 variable "mongodb_major_ver" {
   description = "The MongoDB cluster major version"
   type        = number
-  default     = "4.2"
+  default     = "4.4"
 }
 
 variable "cluster_type" {
@@ -49,7 +51,7 @@ variable "provider_backup" {
 variable "disk_size_gb" {
   description = "Capacity,in gigabytes,of the host’s root volume"
   type        = number
-  default     = null
+  default     = 16
 }
 
 variable "auto_scaling_disk_gb_enabled" {
@@ -62,48 +64,49 @@ variable "auto_scaling_disk_gb_enabled" {
 variable "provider_name" {
   description = "Cloud service provider on which the servers are provisioned."
   type        = string
-  default     = "TENANT"
+  default     = "GCP"
 }
 
-# to remove
-variable "project_id" {
-  description = "The project id where cluster need to be created"
+
+variable "atlas_project_id" {
+  description = "The project id where atlas cluster need to be created"
   type        = string
-  default     = "63c2d0e5c539693c6589c960"
+  default     = "64011967723eb94df1cf4033"
 }
 
 locals {
   cloud_provider = "GCP"
+  gcp_project = "sre-play"
 }
 
 variable "atlas_public_key" {
   description = "The project id where cluster need to be created"
   type        = string
-  default     = "xxx"
+  # default     = <>
 }
 
 variable "atlas_private_key" {
   description = "The project id where cluster need to be created"
   type        = string
-  default     = "xxx"
+  # default     = <>
 }
 
 variable "atlas_project_name" {
   description = "The project name "
   type        = string
-  default     = "mongo-test"
+  default     = "sre-play"
 }
 
 variable "instance_size" {
   description = "Hardware specification for the instance sizes in this region"
   type        = string
-  default     = "M0"
+  default     = "M30"
 }
 
 variable "priority" {
   description = "Election priority of the region."
   type        = number
-  default     = 6
+  default     = 7
 }
 
 variable "mongo-username" {
@@ -129,3 +132,24 @@ variable "role-name" {
   type        = string
   default     = "readWrite"
 }
+
+variable "google_compute_network_name" {
+  type        = string
+  default     = "default"
+}
+
+variable "google_compute_subnetwork" {
+  type        = string
+  default     = "default"
+}
+
+variable "mongodbatlas_network_peering_network_name" {
+  type        = string
+  default     = "default"
+}
+
+variable "google_compute_network_peering_name" {
+  type        = string
+  default     = "peering-gcp-terraform-test"
+}
+

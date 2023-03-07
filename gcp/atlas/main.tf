@@ -10,8 +10,8 @@ provider "google" {
   region      = var.db_region
 }
 
-data "mongodbatlas_roles_org_id" "test" {
-}
+# data "mongodbatlas_roles_org_id" "test" {
+# }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE MONGODB PROJECT
@@ -75,18 +75,18 @@ resource "random_password" "mongo-user-pwd" {
 # ---------------------------------------------------------------------------------------------------------------------
 # WRITE USER PWD TO GCP
 # ---------------------------------------------------------------------------------------------------------------------
-# module "mongo_user_password" {
-#   source        = "git::git@github.com:harness/terraform-modules.git//gcp/secret-write"
-#   name          = "mongo-user-pwd"
-#   project       = var.gcp_project
-#   region        = var.db_region
-#   data          = random_password.mongo-user-pwd.result
-# }
+module "mongo_user_password" {
+  source        = "git::git@github.com:harness/terraform-modules.git//gcp/secret-write"
+  name          = "mongo-user-pwd"
+  project       = var.gcp_project
+  region        = var.db_region
+  data          = random_password.mongo-user-pwd.result
+}
 
-# ---------------------------------------------------------------------------------------------------------------------
-# WRITE PUBLIC KEY TO GCP
-# ---------------------------------------------------------------------------------------------------------------------
-# module "atlas_public_key" {
+# # ---------------------------------------------------------------------------------------------------------------------
+# # WRITE PUBLIC KEY TO GCP
+# # ---------------------------------------------------------------------------------------------------------------------
+# module "atlas_write_public_key" {
 #   source        = "git::git@github.com:harness/terraform-modules.git//gcp/secret-write"
 #   name          = "atlas_public_key"
 #   project       = var.gcp_project
@@ -94,10 +94,10 @@ resource "random_password" "mongo-user-pwd" {
 #   data          = <>
 # }
 
-# ---------------------------------------------------------------------------------------------------------------------
-# WRITE PRIVATE KEY TO GCP
-# ---------------------------------------------------------------------------------------------------------------------
-# module "atlas_private_key" {
+# # ---------------------------------------------------------------------------------------------------------------------
+# # WRITE PRIVATE KEY TO GCP
+# # ---------------------------------------------------------------------------------------------------------------------
+# module "atlas_write_private_key" {
 #   source        = "git::git@github.com:harness/terraform-modules.git//gcp/secret-write"
 #   name          = "atlas_private_key"
 #   project       = var.gcp_project
@@ -109,29 +109,29 @@ resource "random_password" "mongo-user-pwd" {
 # ---------------------------------------------------------------------------------------------------------------------
 # READ PUBLIC KEY FROM GCP
 # ---------------------------------------------------------------------------------------------------------------------
-# module "atlas_public_key" {
-#   source        = "git::git@github.com:harness/terraform-modules.git//gcp/secret-read"
-#   name          = "atlas_public_key"
-#   project       = var.gcp_project
-#   region        = var.db_region
-# }
+module "atlas_read_public_key" {
+  source        = "git::git@github.com:harness/terraform-modules.git//gcp/secret-read"
+  name          = "atlas_public_key"
+  project       = var.gcp_project
+  region        = var.db_region
+}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # READ PUBLIC KEY FROM GCP
 # ---------------------------------------------------------------------------------------------------------------------
-# module "atlas_private_key" {
-#   source        = "git::git@github.com:harness/terraform-modules.git//gcp/secret-read"
-#   name          = "atlas_private_key"
-#   project       = var.gcp_project
-#   region        = var.db_region
-# }
+module "atlas_read_private_key" {
+  source        = "git::git@github.com:harness/terraform-modules.git//gcp/secret-read"
+  name          = "atlas_private_key"
+  project       = var.gcp_project
+  region        = var.db_region
+}
 
 # Provider
 provider "mongodbatlas" {
-  # public_key        = module.atlas_public_key.data
-  # private_key       = module.atlas_private_key.data
-  public_key        = var.atlas_public_key
-  private_key       = var.atlas_private_key
+  public_key        = module.atlas_read_public_key.data
+  private_key       = module.atlas_read_private_key.data
+  # public_key        = var.atlas_public_key
+  # private_key       = var.atlas_private_key
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

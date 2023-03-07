@@ -36,14 +36,6 @@ variable "db_activation_policy" {
   default = ""
 }
 
-variable "authorized_networks" {
-  type = list(map(string))
-  default = [{
-    name = "gcp-health-check-range"
-    value = "130.211.0.0/28"
-  }]
-}
-
 variable "databases" {
   type = list(string)
   default = []

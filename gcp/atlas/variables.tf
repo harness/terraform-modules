@@ -79,17 +79,17 @@ locals {
   gcp_project = "sre-play"
 }
 
-variable "atlas_public_key" {
-  description = "The project id where cluster need to be created"
-  type        = string
-  # default     = <>
-}
+# variable "atlas_public_key" {
+#   description = "The project id where cluster need to be created"
+#   type        = string
+#   default     = <>
+# }
 
-variable "atlas_private_key" {
-  description = "The project id where cluster need to be created"
-  type        = string
-  # default     = <>
-}
+# variable "atlas_private_key" {
+#   description = "The project id where cluster need to be created"
+#   type        = string
+#   default     = <>
+# }
 
 variable "atlas_project_name" {
   description = "The project name "

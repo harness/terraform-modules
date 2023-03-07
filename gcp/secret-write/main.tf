@@ -3,10 +3,6 @@ provider "google" {
     region = var.region
 }
 
-resource "google_project_service" "secretmanager" {
-    provider = google
-    service = "secretmanager.googleapis.com"
-}
 
 resource "google_secret_manager_secret" "this" {
     secret_id = var.name 

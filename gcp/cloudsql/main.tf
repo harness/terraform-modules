@@ -57,12 +57,12 @@ module "admin_password" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "google_sql_user" "this" {
-  name            = value.admin
+  name            = var.admin
   project         = var.project
   instance        = google_sql_database_instance.this.name
   password        = random_password.admin-pwd.result
   depends_on = [
     google_sql_database_instance.this
   ]
-  deletion_policy = var.db_protection
+  # deletion_policy = var.db_protection
 }

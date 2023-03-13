@@ -2,6 +2,11 @@ variable "project" {
   type = string
 }
 
+variable "admin" {
+  type = string
+  default = "admin"
+}
+
 variable "db_name" {
   type = string
 }

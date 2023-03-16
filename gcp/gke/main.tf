@@ -12,10 +12,10 @@ resource "google_container_cluster" "primary" {
   name     = var.name 
   location = var.region
 
-  remove_default_node_pool = false
+  remove_default_node_pool = var.remove_default_node_pool
   initial_node_count       = 1
 
-  #enable_autopilot = var.enable_autopilot
+  enable_autopilot = var.enable_autopilot
 
   master_authorized_networks_config {
     dynamic "cidr_blocks" {
@@ -25,6 +25,12 @@ resource "google_container_cluster" "primary" {
         cidr_block = cidr_blocks.value
         display_name = cidr_blocks.key
       }
+    }
+  }
+
+  master_auth {
+    client_certificate_config {
+      issue_client_certificate = true 
     }
   }
 

@@ -3,6 +3,10 @@ output "id" {
     value = google_container_cluster.primary.id
 }
 
+output "self_link" {
+    value = google_container_cluster.primary.self_link
+}
+
 output "endpoint" {
     description = "Endpoint for cluster"
     value = google_container_cluster.primary.endpoint

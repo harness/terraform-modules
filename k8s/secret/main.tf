@@ -7,11 +7,10 @@ provider "kubernetes" {
 }
 
 resource "kubernetes_secret" "this" {
-    metdata {
+    metadata {
         name = var.name
     }
 
     data = var.data
-
     type = var.type
 }

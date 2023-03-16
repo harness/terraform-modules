@@ -4,7 +4,6 @@ provider "google" {
 }
 provider "kubernetes" {
     
-    load_config_file = false
     username = ""
     password = "" 
 

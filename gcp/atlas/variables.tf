@@ -1,5 +1,6 @@
 variable "gcp_project" {
   type = string
+  default = "us-east1"
 }
 
 variable "db_region" {

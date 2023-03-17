@@ -45,3 +45,17 @@ variable "databases" {
   type = list(string)
   default = []
 }
+
+# variable "name" {
+#   type        = string
+#   description = "Name of the Kubernetes secret that will be created"
+# }
+
+# variable "registries" {
+#   type = map(object({
+#     username = string
+#     password = string
+#   }))
+
+#   description = "Map of registry hostnames to credentials (username, password)."
+# }

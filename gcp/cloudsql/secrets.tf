@@ -62,3 +62,25 @@ module "cloudsql_ip_address" {
   region        = var.db_region
   data          = google_sql_database_instance.this.ip_address.0.ip_address
 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# WRITING CLOUDSQL DB USER TO GCP 
+# ---------------------------------------------------------------------------------------------------------------------
+module "postgres_db_username" {
+  source        = "git::git@github.com:harness/terraform-modules.git//gcp/secret-write"
+  name          = "postgres_db_username"
+  project       = var.project
+  region        = var.db_region
+  data          = var.admin
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# WRITE CLOUDSQL USER PWD TO GCP
+# ---------------------------------------------------------------------------------------------------------------------
+module "postgres_admin_password" {
+  source        = "git::git@github.com:harness/terraform-modules.git//gcp/secret-write"
+  name          = "postgres_admin_password"
+  project       = var.project
+  region        = var.db_region
+  data          = random_password.admin-pwd.result
+}

@@ -34,3 +34,8 @@ variable "type" {
     type = string
     default = "Opaque"
 }
+
+variable "namespace" {
+    type = string
+    default = "default"
+}

@@ -14,8 +14,7 @@ resource "google_container_cluster" "primary" {
 
 #  remove_default_node_pool = var.remove_default_node_pool
   initial_node_count       = 1
-
-  enable_autopilot = var.enable_autopilot
+#  enable_autopilot = var.enable_autopilot
 
   master_authorized_networks_config {
     dynamic "cidr_blocks" {

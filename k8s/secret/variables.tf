@@ -1,15 +1,7 @@
-variable "gcp_project_id" {
-    type = string
-}
-
-variable "gcp_region" {
-    type = string
-}
-
 variable "cluster_endpoint" {
     type = string
 }
-
+/*
 variable "client_certificate" {
     type = string
 }
@@ -17,6 +9,7 @@ variable "client_certificate" {
 variable "client_key" {
     type = string
 }
+*/
 
 variable "cluster_ca_certificate" {
     type = string
@@ -24,6 +17,7 @@ variable "cluster_ca_certificate" {
 
 variable "name" {
     type = string
+    default = "k8-key"
 }
 
 variable "data" {
@@ -33,9 +27,4 @@ variable "data" {
 variable "type" {
     type = string
     default = "Opaque"
-}
-
-variable "namespace" {
-    type = string
-    default = "default"
 }

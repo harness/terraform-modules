@@ -3,21 +3,21 @@ provider "google" {
     region = var.gcp_region
 }
 
-data "google_container_cluster" "my_cluster" {
-  name     = var.gcp_project_id
-  location = var.gcp_region
-}
+
+data "google_client_config" "provider" {}
 
 provider "kubernetes" {
-    host = var.cluster_endpoint
-    client_certificate = data.google_container_cluster.my_cluster.client_certificate
-    client_key = data.google_container_cluster.my_cluster.client_key
-    cluster_ca_certificate = var.cluster_ca_certificate
-}
+    token = data.google_client_config.provider.access_token
 
+    host = var.cluster_endpoint
+    client_certificate = base64decode(var.client_certificate)
+    client_key = base64decode(var.client_key)
+    cluster_ca_certificate = base64decode(var.cluster_ca_certificate)
+}
 resource "kubernetes_secret" "this" {
-    metdata {
+    metadata {
         name = var.name
+        namespace = var.namespace
     }
 
     data = var.data

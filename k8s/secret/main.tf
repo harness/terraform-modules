@@ -1,8 +1,7 @@
 provider "google" {
-    project = var.gcp_project_id
+    project = var.gcp_project
     region = var.gcp_region
 }
-
 
 data "google_client_config" "provider" {}
 

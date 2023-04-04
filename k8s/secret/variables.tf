@@ -28,3 +28,11 @@ variable "type" {
     type = string
     default = "Opaque"
 }
+
+variable "gcp_project" {
+    type = string
+}
+
+variable "gcp_region" {
+    type = string
+}

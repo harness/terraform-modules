@@ -131,7 +131,7 @@ variable "mongo-auth-db-name" {
 variable "role-name" {
   description = "Database against which Atlas authenticates the user"
   type        = string
-  default     = "readWrite"
+  default     = "atlasAdmin"
 }
 
 variable "google_compute_network_name" {
@@ -153,4 +153,3 @@ variable "google_compute_network_peering_name" {
   type        = string
   default     = "peering-gcp-terraform-test"
 }
-

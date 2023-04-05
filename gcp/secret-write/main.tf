@@ -5,6 +5,7 @@ provider "google" {
 
 
 resource "google_secret_manager_secret" "this" {
+    count = var.enabled ? 1 : 0
     secret_id = var.name 
     labels = var.labels   
     replication {
@@ -20,6 +21,7 @@ resource "google_secret_manager_secret" "this" {
 }
 
 resource "google_secret_manager_secret_version" "this" {
+    count = var.enabled ? 1 : 0
     secret = google_secret_manager_secret.this.id 
     secret_data = var.data
 }

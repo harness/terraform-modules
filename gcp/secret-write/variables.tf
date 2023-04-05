@@ -23,3 +23,7 @@ variable "labels" {
     default = {}
 }
 
+variable "enabled" {
+    type = bool
+    default = true
+}

@@ -9,5 +9,5 @@ data "google_secret_manager_secret_version" "this" {
 }
 
 output "data" {
-    value = data.google_secret_manager_secret_version.this[0].secret_data
+    value = one(data.google_secret_manager_secret_version.this[*].secret_data)
 }

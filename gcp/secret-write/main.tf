@@ -22,6 +22,6 @@ resource "google_secret_manager_secret" "this" {
 
 resource "google_secret_manager_secret_version" "this" {
     count = var.enabled ? 1 : 0
-    secret = google_secret_manager_secret.this.id 
+    secret = google_secret_manager_secret[0].this.id 
     secret_data = var.data
 }

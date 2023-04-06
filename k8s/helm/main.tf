@@ -29,7 +29,7 @@ resource "kubernetes_namespace" "this" {
   count = local.create_namespace ? 1 : 0
   metadata {
     name        = var.kubernetes_namespace
-    annotations = var.kubernetes_namespace_annoations
+    annotations = var.kubernetes_namespace_annotations
     labels      = var.kubernetes_namespace_labels
   }
 }

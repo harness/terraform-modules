@@ -15,7 +15,7 @@ provider "kubernetes" {
     token = data.google_client_config.provider.access_token
 
     host = format("%s%s", "https://", data.google_container_cluster.cluster.endpoint)
-    cluster_ca_certificate = data.google_container_cluster.cluster.master_auth.0.ca_certificate
+    cluster_ca_certificate = data.google_container_cluster.cluster.master_auth.0.cluster_ca_certificate
     client_key = data.google_container_cluster.cluster.master_auth.0.client_key
     client_certificate = data.google_container_cluster.cluster.master_auth.0.client_certificate
 }

@@ -1,23 +1,10 @@
-variable "cluster_endpoint" {
-    type = string
-}
-
-variable "client_certificate" {
-    type = string
-}
-
-variable "client_key" {
-    type = string
-}
-
-
-variable "cluster_ca_certificate" {
-    type = string
+variable "enabled" {
+    type = bool
+    default = true
 }
 
 variable "name" {
     type = string
-    default = "k8-key"
 }
 
 variable "data" {
@@ -29,6 +16,9 @@ variable "type" {
     default = "Opaque"
 }
 
+variable "gke_cluster_name" {
+    type = string
+}
 variable "gcp_project" {
     type = string
 }

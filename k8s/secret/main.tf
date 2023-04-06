@@ -1,31 +1,30 @@
 provider "google" {
-    project = var.gcp_project
-    region = var.gcp_region
+  project = var.gcp_project
+  region  = var.gcp_region
 }
 
-data "google_client_config" "provider" {}
+data "google_client_config" "default" {}
 
-data "google_container_cluster" "cluster" {
-  name      = var.gke_cluster_name
-  project   = var.gcp_project
-  location  = var.gcp_region
+data "google_container_cluster" "default" {
+  name     = var.gke_cluster_name
+  project  = var.gcp_project
+  location = var.gcp_region
 }
 
 provider "kubernetes" {
-    token = data.google_client_config.provider.access_token
-
-    host = format("%s%s", "https://", data.google_container_cluster.cluster.endpoint)
-    cluster_ca_certificate = base64decode(data.google_container_cluster.cluster.master_auth.0.cluster_ca_certificate)
-    client_key = data.google_container_cluster.cluster.master_auth.0.client_key
-    client_certificate = data.google_container_cluster.cluster.master_auth.0.client_certificate
+  host  = "https://${data.google_container_cluster.default.endpoint}"
+  token = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(
+    data.google_container_cluster.default.master_auth[0].cluster_ca_certificate,
+  )
 }
 resource "kubernetes_secret" "this" {
-    count = var.enabled ? 1 : 0
-    metadata {
-        name = var.name
-        namespace = var.namespace
-    }
+  count = var.enabled ? 1 : 0
+  metadata {
+    name      = var.name
+    namespace = var.namespace
+  }
 
-    data = var.data
-    type = var.type
+  data = var.data
+  type = var.type
 }

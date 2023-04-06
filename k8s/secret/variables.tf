@@ -1,32 +1,32 @@
 variable "enabled" {
-    type = bool
-    default = true
+  type    = bool
+  default = true
 }
 
 variable "name" {
-    type = string
+  type = string
 }
 
 variable "data" {
-    type = map(string)
+  type = map(string)
 }
 
 variable "type" {
-    type = string
-    default = "Opaque"
+  type    = string
+  default = "Opaque"
 }
 
 variable "gke_cluster_name" {
-    type = string
+  type = string
 }
 variable "gcp_project" {
-    type = string
+  type = string
 }
 
 variable "gcp_region" {
-    type = string
+  type = string
 }
 
 variable "namespace" {
-    type = string
+  type = string
 }

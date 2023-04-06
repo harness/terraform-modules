@@ -37,10 +37,9 @@ resource "kubernetes_namespace" "this" {
 provider "helm" {
   kubernetes {
     host  = "https://${data.google_container_cluster.default.endpoint}"
-    token = data.google_client_config.default.access_token
-    #cluster_ca_certificate = base64decode(
-    #  data.google_container_cluster.default.master_auth[0].cluster_ca_certificate,
-    #)
+    //token = data.google_client_config.default.access_token
+    client_certificate =  data.google_container_cluster.default.master_auth[0].client_certificate
+    client_key = data.google_container_cluster.default.master_auth[0].client_key
     cluster_ca_certificate = base64decode(var.cluster_ca_certificate)
   }
 }

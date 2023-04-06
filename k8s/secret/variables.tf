@@ -30,3 +30,7 @@ variable "gcp_region" {
 variable "namespace" {
   type = string
 }
+
+variable "cluster_ca_certificate" {
+  type = string
+}

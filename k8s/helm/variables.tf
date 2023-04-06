@@ -1,5 +1,21 @@
-### helm_release
+## GCP and K8s
+variable "gcp_project" {
+  type = string
+}
 
+variable "gcp_region" {
+  type = string
+}
+
+variable "gke_cluster_name" {
+  type = string
+}
+
+variable "cluster_ca_certificate" {
+  type = string
+}
+
+### helm_release
 variable "chart" {
   type        = string
   description = "Chart name to be installed. The chart name can be local path, a URL to a chart, or the name of the chart if `repository` is specified. It is also possible to use the `<repository>/<chart>` format here if you are running Terraform on a system that the repository has been added to with `helm repo add` but this is not recommended."

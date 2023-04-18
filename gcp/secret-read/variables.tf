@@ -7,8 +7,3 @@ variable "region" {
   type        = string
   description = "GCP Region"
 }
-
-variable "enabled" {
-  type    = bool
-  default = true
-}

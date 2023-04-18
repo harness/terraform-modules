@@ -13,8 +13,3 @@ variable "data" {
   type        = string
   description = "Secret Data"
 }
-
-variable "enabled" {
-  type    = bool
-  default = true
-}

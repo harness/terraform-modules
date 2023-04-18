@@ -8,11 +8,6 @@ variable "region" {
   description = "GCP Region"
 }
 
-variable "name" {
-  type        = string
-  description = "Secret to read"
-}
-
 variable "enabled" {
   type    = bool
   default = true

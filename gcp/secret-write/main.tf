@@ -6,8 +6,8 @@ provider "google" {
 
 resource "google_secret_manager_secret" "this" {
   count     = var.enabled ? 1 : 0
-  secret_id = var.name
-  labels    = var.labels
+  secret_id = module.this.id
+  labels    = module.this.tags
   replication {
     user_managed {
       replicas {

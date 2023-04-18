@@ -4,7 +4,7 @@ provider "google" {
 }
 
 data "google_secret_manager_secret_version" "this" {
-  count  = var.enabled ? 1 : 0
+  count  = module.this.enabled ? 1 : 0
   secret = module.this.id
 }
 

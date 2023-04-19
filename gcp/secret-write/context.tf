@@ -39,7 +39,7 @@ variable "context" {
     regex_replace_chars = null
     label_order         = []
     id_length_limit     = null
-    label_key_case      = null
+    label_key_case      = "lower"
     label_value_case    = null
     descriptor_formats  = {}
     # Note: we have to use [] instead of null for unset lists due to

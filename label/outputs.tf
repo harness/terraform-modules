@@ -28,9 +28,9 @@ output "cluster" {
   description = "Normalized cluster"
 }
 
-output "name" {
+output "description" {
   value       = local.enabled ? local.description : ""
-  description = "Normalized name"
+  description = "Normalized description"
 }
 
 output "stage" {

@@ -142,7 +142,7 @@ locals {
     tenant      = local.tenant
     cluster     = local.cluster
     stage       = local.stage
-    description = local.name
+    description = local.description
     attributes  = join(local.delimiter, local.attributes)
   }
 
@@ -173,7 +173,7 @@ locals {
     tenant              = local.tenant
     cluster             = local.cluster
     stage               = local.stage
-    description         = local.name
+    description         = local.description
     delimiter           = local.delimiter
     attributes          = local.attributes
     tags                = local.tags

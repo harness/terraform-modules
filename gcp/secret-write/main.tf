@@ -1,8 +1,9 @@
+/*
 provider "google" {
   project = var.project
   region  = var.region
 }
-
+*/
 
 resource "google_secret_manager_secret" "this" {
   count     = module.this.enabled ? 1 : 0

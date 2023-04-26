@@ -1,5 +1,5 @@
 module "this" {
-  source = "git::git@github.com:harness/terraform-modules.git//label"
+  source = "git::https://github.com/harness/terraform-modules.git//label"
 
   enabled             = var.enabled
   namespace           = var.namespace

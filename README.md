@@ -2,8 +2,6 @@ This repo contains code used in the [Harness CD Community Edition](https://githu
 
 # Harness Terraform Modules
 
-Grouped Code Coverage report for master branch: [Coverage Report](https://github.com/harness/harness-core-ui/wiki/Coverage
-
 # Getting Started
 
 # Contributing

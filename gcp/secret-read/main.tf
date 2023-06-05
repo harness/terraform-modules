@@ -9,6 +9,7 @@ data "google_secret_manager_secret_version" "this" {
   count  = module.this.enabled ? 1 : 0
   project = var.project
   secret = module.this.id
+  project = var.project
 }
 
 output "data" {

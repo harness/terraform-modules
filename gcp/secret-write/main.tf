@@ -9,6 +9,7 @@ resource "google_secret_manager_secret" "this" {
   count     = module.this.enabled ? 1 : 0
   secret_id = module.this.id
   labels    = module.this.tags
+  project   = var.project
   replication {
     user_managed {
       replicas {

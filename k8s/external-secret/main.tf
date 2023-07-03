@@ -1,3 +1,4 @@
+/*
 provider "google" {
   project = var.project
   region  = var.region
@@ -31,6 +32,7 @@ provider "kubernetes" {
   token                  = data.google_client_config.default.access_token
   cluster_ca_certificate = base64decode(module.cluster_ca_certificate.data)
 }
+*/
 
 resource "kubectl_manifest" "external-secret" {
   yaml_body = templatefile("${path.module}/ExternalSecret.yaml", {

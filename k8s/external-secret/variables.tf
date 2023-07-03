@@ -8,6 +8,11 @@ variable "region" {
 }
 */
 
+variable "enabled" {
+  type = bool
+  default = true
+}
+
 variable "secretName" {
   type = string
 }

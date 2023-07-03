@@ -1,3 +1,4 @@
+/*
 variable "project" {
   type = string
 }
@@ -5,6 +6,7 @@ variable "project" {
 variable "region" {
   type = string
 }
+*/
 
 variable "secretName" {
   type = string

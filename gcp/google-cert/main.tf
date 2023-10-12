@@ -48,5 +48,5 @@ resource "google_certificate_manager_certificate_map_entry" "default-cert-map" {
   }
 
   certificates = [google_certificate_manager_certificate.default-cert.id]
-
+  hostname = var.domain
 }

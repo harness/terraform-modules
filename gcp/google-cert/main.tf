@@ -50,3 +50,16 @@ resource "google_certificate_manager_certificate_map_entry" "default-cert-map" {
   certificates = [google_certificate_manager_certificate.default-cert.id]
   hostname = var.domain
 }
+
+resource "google_certificate_manager_certificate_map_entry" "default-cert-map-wildcard" {
+  project     = var.project
+  name        = "${var.project}-default-cert-map-entry-wildcard"
+  description = "default wildcard cert map entry for ${var.project}"
+  map         = google_certificate_manager_certificate_map.default-cert-map.name
+  labels = {
+    "terraform" : true
+  }
+
+  certificates = [google_certificate_manager_certificate.default-cert.id]
+  hostname = "*.${var.domain}"
+}

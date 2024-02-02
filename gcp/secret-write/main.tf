@@ -5,11 +5,20 @@ provider "google" {
 }
 */
 
+module "labels" {
+  source           = "git::https://github.com/harness/terraform-modules.git//label"
+  context          = module.this.context
+  label_key_case   = "lower"
+  label_value_case = "lower"
+}
+
 resource "google_secret_manager_secret" "this" {
   count     = module.this.enabled ? 1 : 0
   secret_id = module.this.id
-##   labels    = module.this.tags
-  project   = var.project
+
+  ## labels in gcp MUST be lower case, hence the use of the label module
+  labels  = module.labels.tags
+  project = var.project
   replication {
     user_managed {
       replicas {

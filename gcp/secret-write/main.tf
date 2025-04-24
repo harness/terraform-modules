@@ -10,6 +10,7 @@ module "labels" {
   context          = module.this.context
   label_key_case   = "lower"
   label_value_case = "lower"
+  id_length_limit  = 63
 }
 
 resource "google_secret_manager_secret" "this" {
@@ -35,4 +36,8 @@ resource "google_secret_manager_secret_version" "this" {
   count       = module.this.enabled ? 1 : 0
   secret      = google_secret_manager_secret.this[0].id
   secret_data = var.data
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

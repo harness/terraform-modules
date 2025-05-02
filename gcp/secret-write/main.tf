@@ -36,8 +36,4 @@ resource "google_secret_manager_secret_version" "this" {
   count       = module.this.enabled ? 1 : 0
   secret      = google_secret_manager_secret.this[0].id
   secret_data = var.data
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }

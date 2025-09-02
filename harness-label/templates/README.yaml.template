@@ -1,0 +1,85 @@
+# Harness Terraform Module Documentation Template
+# Copy this template to new modules and customize
+
+name: "MODULE_NAME_HERE"
+description: >
+  Brief description of what this Terraform module does.
+  Keep this concise but informative.
+
+# Badges (optional)
+badges:
+  - name: "Latest Release"
+    image: "https://img.shields.io/github/release/harness/terraform-MODULE_NAME_HERE.svg?style=for-the-badge"
+    url: "https://github.com/harness/terraform-MODULE_NAME_HERE/releases/latest"
+  - name: "License"  
+    image: "https://img.shields.io/github/license/harness/terraform-MODULE_NAME_HERE.svg?style=for-the-badge"
+    url: "https://github.com/harness/terraform-MODULE_NAME_HERE/blob/main/LICENSE"
+
+# Usage examples
+usage:
+  - name: "Basic Usage"
+    description: "Simple example showing basic module usage"
+    code: |
+      module "example" {
+        source = "git::https://github.com/harness/terraform-MODULE_NAME_HERE.git?ref=main"
+        
+        # Required variables
+        name        = "example"
+        environment = "dev"
+        
+        # Optional variables
+        tags = {
+          Project = "MyProject"
+          Owner   = "team@company.com"
+        }
+      }
+
+  - name: "Advanced Usage" 
+    description: "Example showing advanced configuration options"
+    code: |
+      module "advanced_example" {
+        source = "git::https://github.com/harness/terraform-MODULE_NAME_HERE.git?ref=main"
+        
+        # Advanced configuration here
+        name        = "advanced-example"
+        environment = "prod"
+        
+        # Module-specific advanced options
+        enable_feature_x = true
+        custom_config = {
+          setting1 = "value1"
+          setting2 = "value2" 
+        }
+      }
+
+# Examples directory references
+examples:
+  - name: "Complete Example"
+    description: "Comprehensive example with all features"
+    url: "./examples/complete/"
+  - name: "Basic Example"  
+    description: "Simple usage example"
+    url: "./examples/basic/"
+
+# Related Harness modules (optional)
+related:
+  - name: "harness-label"
+    url: "https://github.com/harness/terraform-harness-label"  
+    description: "Terraform labeling module for consistent resource naming"
+
+# Contributors
+contributors:
+  - name: "Harness Team"
+    email: "devops@harness.io" 
+    github: "harness"
+    avatar: "https://github.com/harness.png"
+
+# License
+license: |
+  ## License
+  
+  This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
+  
+  ## Support
+  
+  For support, please contact the Harness DevOps team or create an issue in this repository.

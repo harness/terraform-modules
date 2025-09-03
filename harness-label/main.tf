@@ -215,7 +215,17 @@ locals {
     tag_count_compliant        = length(keys(local.tags)) <= 50
     tag_key_length_compliant   = alltrue([for k in keys(local.tags) : length(k) <= 128])
     tag_value_length_compliant = alltrue([for v in values(local.tags) : length(v) <= 256])
-  } : {}
+  } : {
+    # Include same attributes with default values when tag policy is disabled
+    cost_center_missing = false
+    owner_missing       = false
+    project_missing     = false
+    required_tags_missing = []
+    compliance_scope_valid = true
+    tag_count_compliant    = true
+    tag_key_length_compliant   = true
+    tag_value_length_compliant = true
+  }
 
   # Policy compliance status
   policy_compliant = var.tag_policy_enabled ? (

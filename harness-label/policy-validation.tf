@@ -61,13 +61,6 @@ resource "terraform_data" "policy_validation" {
 
 # Optional: Policy compliance check that warns but doesn't fail
 check "tag_policy_compliance" {
-  data "terraform_remote_state" "policy_check" {
-    backend = "local"
-    config = {
-      path = "terraform.tfstate"
-    }
-  }
-
   assert {
     condition     = var.tag_policy_enabled ? local.policy_compliant : true
     error_message = "Resource does not meet tag policy compliance requirements. Check policy_validation_results output for details."

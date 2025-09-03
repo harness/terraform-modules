@@ -46,18 +46,18 @@ the `descriptors` output, which is a map of strings generated according to the f
 `descriptor_formats` input. This feature is intentionally simple and minimally configurable and will not be
 enhanced to add more features that are already in `null-label`. See [examples/complete/descriptors.tf](examples/complete/descriptors.tf) for examples.
 
-## Tag Policy Compliance
+## RFC Cloud Tag Policy Compliance
 
-This module includes comprehensive cloud tag policy compliance functionality:
+This module enforces **RFC Cloud Tag Policy** compliance with **ALL LOWERCASE** tag keys and values:
 
-- **Automatic Policy Tags**: Applies standard compliance tags (CostCenter, Owner, Project, etc.)
-- **Required Tag Validation**: Enforces mandatory organizational tags
-- **Compliance Framework Support**: Supports SOX, PCI, HIPAA, GDPR, ISO27001, FedRAMP, CCPA
-- **Cloud Provider Limits**: Validates tag count and length limits (AWS: 50 tags, 128/256 char limits)
-- **Policy Exceptions**: Controlled exceptions for legacy systems
-- **Pre-deployment Validation**: Comprehensive validation with detailed error messages
+- **RFC Required Tags**: Enforces all 5 required RFC tags (bu, cost-center, module, team, env)
+- **Lowercase Enforcement**: All tag keys and values automatically converted to lowercase
+- **Standardized Values**: Predefined valid values for business units, environments, etc.
+- **Cloud Provider Limits**: Validates AWS tag limits (50 tags, 128/256 char limits)
+- **Policy Exceptions**: Controlled exceptions for legacy resources only
+- **Pre-deployment Validation**: Catches RFC compliance issues before deployment
 
-### Tag Policy Quick Start
+### RFC Tag Policy Quick Start
 
 ```hcl
 module "compliant_label" {
@@ -67,18 +67,23 @@ module "compliant_label" {
   environment = "prod"
   name        = "api-service"
 
-  # Enable tag policy compliance
+  # RFC Tag Policy Compliance - ALL REQUIRED when policy enabled
   tag_policy_enabled = true
-  cost_center        = "ENG001"
-  owner              = "platform@harness.io"
-  project            = "user-api"
+  bu          = "harness"           # Business Unit: harness, split, traceable
+  cost_center = "saas_ops"          # Engineering: saas_ops (prod), engineering_dev (r&d)
+  module      = "pl"               # Module owner: ccm, pl, pie, etc.
+  team        = "sre"              # Team: sre, cs, pie, gitops, ffm-green
+  env         = "prod"             # Environment: prod, setup, dev, pov
   
-  # Optional compliance fields
-  data_classification = "confidential"
-  backup_required     = true
-  compliance_scope    = ["sox", "gdpr"]
+  # Optional RFC tags (include only if needed)
+  owner              = "platform@harness.io"  # Resource owner
+  uuid               = "019634d4-1836-7776-9049-915bb3b6826f"  # UUIDv7
+  expected_end_date  = "2025-12-31"                # Auto-shutdown date
+  reason             = "engops-123"                 # Purpose/ticket
 }
 ```
+
+> 📖 **See [TAG_POLICY.md](TAG_POLICY.md) for complete RFC documentation, examples, and migration guide.**
 
 All Harness Terraform modules use this module to ensure resources can be instantiated multiple times within an account and without conflict.
 
@@ -199,3 +204,91 @@ APACHE2
 ---
 
 This README was generated from [README.yaml](README.yaml) using the Harness documentation generator.
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [terraform_data.policy_validation](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_additional_tag_map"></a> [additional\_tag\_map](#input\_additional\_tag\_map) | Additional key-value pairs to add to each map in `tags_as_list_of_maps`. Not added to `tags` or `id`.<br/>This is for some rare cases where resources want additional configuration of tags<br/>and therefore take a list of maps with tag key, value, and additional configuration. | `map(string)` | `{}` | no |
+| <a name="input_attributes"></a> [attributes](#input\_attributes) | ID element. Additional attributes (e.g. `workers` or `cluster`) to add to `id`,<br/>in the order they appear in the list. New attributes are appended to the<br/>end of the list. The elements of the list are joined by the `delimiter`<br/>and treated as a single ID element. | `list(string)` | `[]` | no |
+| <a name="input_bu"></a> [bu](#input\_bu) | Business Unit. Required for compliance when tag\_policy\_enabled is true. | `string` | `null` | no |
+| <a name="input_context"></a> [context](#input\_context) | Single object for setting entire context at once.<br/>See description of individual variables for details.<br/>Leave string and numeric variables as `null` to use default value.<br/>Individual variable settings (non-null) override settings in context object,<br/>except for attributes, tags, and additional\_tag\_map, which are merged. | `any` | <pre>{<br/>  "additional_tag_map": {},<br/>  "attributes": [],<br/>  "delimiter": null,<br/>  "descriptor_formats": {},<br/>  "enabled": true,<br/>  "environment": null,<br/>  "id_length_limit": null,<br/>  "label_key_case": null,<br/>  "label_order": [],<br/>  "label_value_case": null,<br/>  "labels_as_tags": [<br/>    "unset"<br/>  ],<br/>  "name": null,<br/>  "namespace": null,<br/>  "regex_replace_chars": null,<br/>  "stage": null,<br/>  "tags": {},<br/>  "tenant": null<br/>}</pre> | no |
+| <a name="input_cost_center"></a> [cost\_center](#input\_cost\_center) | Cost center for billing and financial tracking. Required for compliance when tag\_policy\_enabled is true. For Engineering: PROD=saas\_ops, R&D=engineering\_dev. | `string` | `null` | no |
+| <a name="input_delimiter"></a> [delimiter](#input\_delimiter) | Delimiter to be used between ID elements.<br/>Defaults to `-` (hyphen). Set to `""` to use no delimiter at all. | `string` | `null` | no |
+| <a name="input_descriptor_formats"></a> [descriptor\_formats](#input\_descriptor\_formats) | Describe additional descriptors to be output in the `descriptors` output map.<br/>Map of maps. Keys are names of descriptors. Values are maps of the form<br/>`{<br/>   format = string<br/>   labels = list(string)<br/>}`<br/>(Type is `any` so the map values can later be enhanced to provide additional options.)<br/>`format` is a Terraform format string to be passed to the `format()` function.<br/>`labels` is a list of labels, in order, to pass to `format()` function.<br/>Label values will be normalized before being passed to `format()` so they will be<br/>identical to how they appear in `id`.<br/>Default is `{}` (`descriptors` output will be empty). | `any` | `{}` | no |
+| <a name="input_enabled"></a> [enabled](#input\_enabled) | Set to false to prevent the module from creating any resources | `bool` | `null` | no |
+| <a name="input_env"></a> [env](#input\_env) | Environment type. Required for compliance when tag\_policy\_enabled is true. Values: prod (customer-facing), setup (business impact), dev (sandbox/no-SLA). | `string` | `null` | no |
+| <a name="input_environment"></a> [environment](#input\_environment) | ID element. Usually used for region e.g. 'uw2', 'us-west-2', OR role 'prod', 'staging', 'dev', 'UAT' | `string` | `null` | no |
+| <a name="input_expected_end_date"></a> [expected\_end\_date](#input\_expected\_end\_date) | Optional. ISO-8601 date format (YYYY-MM-DD). Sets maximum duration for the resource - will be auto-shutdown after this date. | `string` | `null` | no |
+| <a name="input_id_length_limit"></a> [id\_length\_limit](#input\_id\_length\_limit) | Limit `id` to this many characters (minimum 6).<br/>Set to `0` for unlimited length.<br/>Set to `null` for keep the existing setting, which defaults to `0`.<br/>Does not affect `id_full`. | `number` | `null` | no |
+| <a name="input_label_key_case"></a> [label\_key\_case](#input\_label\_key\_case) | Controls the letter case of the `tags` keys (label names) for tags generated by this module.<br/>Does not affect keys of tags passed in via the `tags` input.<br/>Possible values: `lower`, `title`, `upper`.<br/>Default value: `title`. | `string` | `null` | no |
+| <a name="input_label_order"></a> [label\_order](#input\_label\_order) | The order in which the labels (ID elements) appear in the `id`.<br/>Defaults to ["namespace", "environment", "stage", "name", "attributes"].<br/>You can omit any of the 6 labels ("tenant" is the 6th), but at least one must be present. | `list(string)` | `null` | no |
+| <a name="input_label_value_case"></a> [label\_value\_case](#input\_label\_value\_case) | Controls the letter case of ID elements (labels) as included in `id`,<br/>set as tag values, and output by this module individually.<br/>Does not affect values of tags passed in via the `tags` input.<br/>Possible values: `lower`, `title`, `upper` and `none` (no transformation).<br/>Set this to `title` and set `delimiter` to `""` to yield Pascal Case IDs.<br/>Default value: `lower`. | `string` | `null` | no |
+| <a name="input_labels_as_tags"></a> [labels\_as\_tags](#input\_labels\_as\_tags) | Set of labels (ID elements) to include as tags in the `tags` output.<br/>Default is to include all labels.<br/>Tags with empty values will not be included in the `tags` output.<br/>Set to `[]` to suppress all generated tags.<br/>**Notes:**<br/>  The value of the `name` tag, if included, will be the `id`, not the `name`.<br/>  Unlike other `null-label` inputs, the initial setting of `labels_as_tags` cannot be<br/>  changed in later chained modules. Attempts to change it will be silently ignored. | `set(string)` | <pre>[<br/>  "default"<br/>]</pre> | no |
+| <a name="input_module"></a> [module](#input\_module) | Module that owns this resource (e.g., ccm, pl, pie). Required for compliance when tag\_policy\_enabled is true. | `string` | `null` | no |
+| <a name="input_name"></a> [name](#input\_name) | ID element. Usually the component or solution name, e.g. 'app' or 'jenkins'.<br/>This is the only ID element not also included as a `tag`.<br/>The "name" tag is set to the full `id` string. There is no tag with the value of the `name` input. | `string` | `null` | no |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | ID element. Usually an abbreviation of your organization name, e.g. 'eg' or 'cp', to help ensure generated IDs are globally unique | `string` | `null` | no |
+| <a name="input_owner"></a> [owner](#input\_owner) | Optional. Email address or username of the resource owner (e.g., chris\_ham, christopher.ham@harness.io). | `string` | `null` | no |
+| <a name="input_reason"></a> [reason](#input\_reason) | Optional. Free-form description of the resource purpose. Jira ticket IDs preferred (e.g., engops-123, integration\_testing, customer\_pov). | `string` | `null` | no |
+| <a name="input_regex_replace_chars"></a> [regex\_replace\_chars](#input\_regex\_replace\_chars) | Terraform regular expression (regex) string.<br/>Characters matching the regex will be removed from the ID elements.<br/>If not set, `"/[^a-zA-Z0-9-]/"` is used to remove all characters other than hyphens, letters and digits. | `string` | `null` | no |
+| <a name="input_stage"></a> [stage](#input\_stage) | ID element. Usually used to indicate role, e.g. 'prod', 'staging', 'source', 'build', 'test', 'deploy', 'release' | `string` | `null` | no |
+| <a name="input_tag_policy_enabled"></a> [tag\_policy\_enabled](#input\_tag\_policy\_enabled) | Enable cloud tag policy compliance. When enabled, enforces required tags and validation rules. | `bool` | `true` | no |
+| <a name="input_tag_policy_exceptions"></a> [tag\_policy\_exceptions](#input\_tag\_policy\_exceptions) | Set of tag policy rules to skip for this resource.<br/>Use sparingly and only when justified. Valid exceptions: <br/>'bu\_validation', 'cost\_center\_validation', 'module\_validation', 'team\_validation', 'env\_validation' | `set(string)` | `[]` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Additional tags (e.g. `{'BusinessUnit': 'XYZ'}`).<br/>Neither the tag keys nor the tag values will be modified by this module. | `map(string)` | `{}` | no |
+| <a name="input_team"></a> [team](#input\_team) | Team who owns the resource (e.g., sre, cs, pie, gitops, ffm-green). Required for compliance when tag\_policy\_enabled is true. Team must be registered with ENGOPS. | `string` | `null` | no |
+| <a name="input_tenant"></a> [tenant](#input\_tenant) | ID element \_(Rarely used, not included by default)\_. A customer identifier, indicating who this instance of a resource is for | `string` | `null` | no |
+| <a name="input_uuid"></a> [uuid](#input\_uuid) | Optional. UUIDv7 preferred. Reserved for future use/external reference. | `string` | `null` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_additional_tag_map"></a> [additional\_tag\_map](#output\_additional\_tag\_map) | The merged additional\_tag\_map |
+| <a name="output_attributes"></a> [attributes](#output\_attributes) | List of attributes |
+| <a name="output_context"></a> [context](#output\_context) | Merged but otherwise unmodified input to this module, to be used as context input to other modules.<br/>Note: this version will have null values as defaults, not the values actually used as defaults. |
+| <a name="output_delimiter"></a> [delimiter](#output\_delimiter) | Delimiter between `namespace`, `tenant`, `environment`, `stage`, `name` and `attributes` |
+| <a name="output_descriptors"></a> [descriptors](#output\_descriptors) | Map of descriptors as configured by `descriptor_formats` |
+| <a name="output_enabled"></a> [enabled](#output\_enabled) | True if module is enabled, false otherwise |
+| <a name="output_environment"></a> [environment](#output\_environment) | Normalized environment |
+| <a name="output_id"></a> [id](#output\_id) | Disambiguated ID string restricted to `id_length_limit` characters in total |
+| <a name="output_id_full"></a> [id\_full](#output\_id\_full) | ID string not restricted in length |
+| <a name="output_id_length_limit"></a> [id\_length\_limit](#output\_id\_length\_limit) | The id\_length\_limit actually used to create the ID, with `0` meaning unlimited |
+| <a name="output_label_order"></a> [label\_order](#output\_label\_order) | The naming order actually used to create the ID |
+| <a name="output_name"></a> [name](#output\_name) | Normalized name |
+| <a name="output_namespace"></a> [namespace](#output\_namespace) | Normalized namespace |
+| <a name="output_normalized_context"></a> [normalized\_context](#output\_normalized\_context) | Normalized context of this module |
+| <a name="output_policy_compliance_tags"></a> [policy\_compliance\_tags](#output\_policy\_compliance\_tags) | Standard compliance tags applied based on policy variables |
+| <a name="output_policy_compliant"></a> [policy\_compliant](#output\_policy\_compliant) | Whether the resource tags meet all policy compliance requirements |
+| <a name="output_policy_required_tags"></a> [policy\_required\_tags](#output\_policy\_required\_tags) | Tags required by policy that were applied to this resource |
+| <a name="output_policy_validation_results"></a> [policy\_validation\_results](#output\_policy\_validation\_results) | Detailed validation results for tag policy compliance checks |
+| <a name="output_regex_replace_chars"></a> [regex\_replace\_chars](#output\_regex\_replace\_chars) | The regex\_replace\_chars actually used to create the ID |
+| <a name="output_stage"></a> [stage](#output\_stage) | Normalized stage |
+| <a name="output_tag_policy_enabled"></a> [tag\_policy\_enabled](#output\_tag\_policy\_enabled) | Whether tag policy compliance enforcement is enabled |
+| <a name="output_tag_policy_exceptions"></a> [tag\_policy\_exceptions](#output\_tag\_policy\_exceptions) | Policy rules that were skipped for this resource |
+| <a name="output_tags"></a> [tags](#output\_tags) | Normalized Tag map |
+| <a name="output_tags_as_list_of_maps"></a> [tags\_as\_list\_of\_maps](#output\_tags\_as\_list\_of\_maps) | This is a list with one map for each `tag`. Each map contains the tag `key`,<br/>`value`, and contents of `var.additional_tag_map`. Used in the rare cases<br/>where resources need additional configuration information for each tag. |
+| <a name="output_tenant"></a> [tenant](#output\_tenant) | Normalized tenant |
+<!-- END_TF_DOCS -->

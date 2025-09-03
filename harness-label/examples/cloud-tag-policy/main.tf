@@ -1,5 +1,6 @@
-# Example: Using harness-label with Cloud Tag Policy Compliance
-# This example demonstrates how to use the harness-label module with tag policy enforcement
+# Example: Using harness-label with RFC Cloud Tag Policy Compliance
+# This example demonstrates how to use the harness-label module with RFC tag policy enforcement
+# RFC requires ALL LOWERCASE tag keys and values
 
 terraform {
   required_version = ">= 1.0"
@@ -11,7 +12,7 @@ terraform {
   }
 }
 
-# Standard usage with tag policy compliance enabled
+# Production usage with full RFC compliance
 module "label_compliant" {
   source = "../.."
 
@@ -22,25 +23,21 @@ module "label_compliant" {
   name        = "user-service"
   attributes  = ["v2"]
 
-  # Tag Policy Compliance - REQUIRED when tag_policy_enabled = true
+  # RFC Tag Policy Compliance - REQUIRED when tag_policy_enabled = true (ALL LOWERCASE)
   tag_policy_enabled = true
-  cost_center        = "ENG001"
-  owner              = "platform-team@harness.io"
-  project            = "user-management"
-
-  # Optional compliance fields
-  data_classification = "confidential"
-  backup_required     = true
-  business_unit       = "Engineering"
-  compliance_scope    = ["sox", "gdpr"]
-  managed_by          = "terraform"
-
-  # Required tags from organizational policy
-  required_tags = {
-    "CostAllocation" = "infrastructure"
-    "Department"     = "engineering"
-    "ServiceTier"    = "tier1"
-  }
+  
+  # Required RFC tags (always required when policy enabled)
+  bu          = "harness"           # Business Unit: harness, split, traceable
+  cost_center = "saas_ops"          # For Engineering: PROD=saas_ops, R&D=engineering_dev
+  module      = "pl"               # Module owner: ccm, pl, pie, etc.
+  team        = "sre"              # Team owner: sre, cs, pie, gitops, ffm-green
+  env         = "prod"             # Environment: prod, setup, dev, pov
+  
+  # Optional RFC tags (only include if needed)
+  owner              = "platform-team@harness.io"  # Optional: resource owner
+  uuid               = "019634d4-1836-7776-9049-915bb3b6826f"  # Optional: UUIDv7
+  expected_end_date  = "2025-12-31"                # Optional: auto-shutdown date
+  reason             = "engops-123"                 # Optional: purpose/ticket
 
   # Additional custom tags
   tags = {
@@ -63,7 +60,7 @@ resource "aws_s3_bucket_versioning" "example" {
   }
 }
 
-# Example with policy exceptions for legacy resources
+# Legacy resource with policy exceptions
 module "label_legacy_exception" {
   source = "../.."
 
@@ -73,19 +70,22 @@ module "label_legacy_exception" {
 
   # Enable policy but skip certain validations for legacy systems
   tag_policy_enabled = true
-  cost_center        = "LEGACY"
-  owner              = "legacy-team@harness.io"
 
-  # Skip project validation for legacy systems
-  tag_policy_exceptions = ["project_validation"]
-
-  required_tags = {
-    "Legacy"    = "true"
-    "Migration" = "planned"
-  }
+  # Required RFC tags
+  bu          = "harness"
+  cost_center = "legacy_ops"
+  module      = "legacy"
+  team        = "platform"
+  env         = "setup"
+  
+  # Skip team validation for legacy systems
+  tag_policy_exceptions = ["team_validation"]
+  
+  # Optional RFC tags for legacy tracking
+  reason = "legacy_migration"
 }
 
-# Example with policy disabled for development
+# Development resource with policy disabled
 module "label_dev_no_policy" {
   source = "../.."
 

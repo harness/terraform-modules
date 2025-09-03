@@ -1,8 +1,26 @@
 ################################
-# terraform-null-label example #
+# harness-label with RFC Cloud Tag Policy example #
 ################################
 module "label" {
   source = "../../"
+
+  # Basic labeling
+  namespace   = "harness"
+  environment = "dev"
+  stage       = "demo"
+  name        = "autoscaling"
+
+  # RFC Cloud Tag Policy Compliance
+  tag_policy_enabled = true
+  bu          = "harness"           # Business Unit
+  cost_center = "engineering_dev"   # Engineering R&D cost center
+  module      = "pl"               # Platform module
+  team        = "sre"              # SRE team
+  env         = "dev"              # Development environment
+  
+  # Optional RFC tags
+  owner  = "sre@harness.io"
+  reason = "demo-asg-example"
 
   context = module.this.context
 }

@@ -6,28 +6,30 @@ resource "terraform_data" "policy_validation" {
   count = var.tag_policy_enabled ? 1 : 0
 
   lifecycle {
-    # Fail if required policy tags are missing
+    # RFC Required Tags Validation
+    precondition {
+      condition     = !contains(var.tag_policy_exceptions, "bu_validation") ? var.bu != null : true
+      error_message = "Business Unit (bu) is required when tag policy is enabled. Set var.bu or add 'bu_validation' to tag_policy_exceptions."
+    }
+
     precondition {
       condition     = !contains(var.tag_policy_exceptions, "cost_center_validation") ? var.cost_center != null : true
       error_message = "Cost center is required when tag policy is enabled. Set var.cost_center or add 'cost_center_validation' to tag_policy_exceptions."
     }
 
     precondition {
-      condition     = !contains(var.tag_policy_exceptions, "owner_validation") ? var.owner != null : true
-      error_message = "Owner email is required when tag policy is enabled. Set var.owner or add 'owner_validation' to tag_policy_exceptions."
+      condition     = !contains(var.tag_policy_exceptions, "module_validation") ? var.module != null : true
+      error_message = "Module is required when tag policy is enabled. Set var.module or add 'module_validation' to tag_policy_exceptions."
     }
 
     precondition {
-      condition     = !contains(var.tag_policy_exceptions, "project_validation") ? var.project != null : true
-      error_message = "Project identifier is required when tag policy is enabled. Set var.project or add 'project_validation' to tag_policy_exceptions."
+      condition     = !contains(var.tag_policy_exceptions, "team_validation") ? var.team != null : true
+      error_message = "Team is required when tag policy is enabled. Set var.team or add 'team_validation' to tag_policy_exceptions."
     }
 
-    # Validate all required tags are present
     precondition {
-      condition = !contains(var.tag_policy_exceptions, "required_tags") ? alltrue([
-        for required_tag in keys(var.required_tags) : contains(keys(local.tags), required_tag)
-      ]) : true
-      error_message = "Missing required tags: ${join(", ", [for tag in keys(var.required_tags) : tag if !contains(keys(local.tags), tag)])}. Provide values or add 'required_tags' to tag_policy_exceptions."
+      condition     = !contains(var.tag_policy_exceptions, "env_validation") ? var.env != null : true
+      error_message = "Environment (env) is required when tag policy is enabled. Set var.env or add 'env_validation' to tag_policy_exceptions."
     }
 
     # Validate tag count limits
@@ -48,14 +50,6 @@ resource "terraform_data" "policy_validation" {
       error_message = "Tag value length exceeds AWS limit of 256 characters."
     }
 
-    # Validate compliance scopes are recognized
-    precondition {
-      condition = alltrue([
-        for scope in var.compliance_scope :
-        contains(["sox", "pci", "hipaa", "gdpr", "iso27001", "fedramp", "ccpa"], scope)
-      ])
-      error_message = "Invalid compliance scope(s): ${join(", ", [for scope in var.compliance_scope : scope if !contains(["sox", "pci", "hipaa", "gdpr", "iso27001", "fedramp", "ccpa"], scope)])}. Valid values: sox, pci, hipaa, gdpr, iso27001, fedramp, ccpa."
-    }
   }
 }
 

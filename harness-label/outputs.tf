@@ -126,10 +126,6 @@ output "policy_compliance_tags" {
   description = "Standard compliance tags applied based on policy variables"
 }
 
-output "compliance_scope" {
-  value       = var.compliance_scope
-  description = "Compliance frameworks this resource must adhere to"
-}
 
 output "tag_policy_exceptions" {
   value       = var.tag_policy_exceptions

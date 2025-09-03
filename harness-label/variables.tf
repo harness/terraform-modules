@@ -227,115 +227,111 @@ variable "descriptor_formats" {
     EOT
 }
 
-# Cloud Tag Policy Variables
+# Cloud Tag Policy Variables (RFC Compliant)
 variable "tag_policy_enabled" {
   type        = bool
   default     = true
   description = "Enable cloud tag policy compliance. When enabled, enforces required tags and validation rules."
 }
 
-variable "required_tags" {
-  type        = map(string)
-  default     = {}
-  description = <<-EOT
-    Map of required tags for cloud resource compliance.
-    These tags will be automatically added to all resources and validated.
-    Common required tags include: cost_center, owner, project, data_classification, etc.
-    EOT
+# Required Tags (RFC)
+variable "bu" {
+  type        = string
+  default     = null
+  description = "Business Unit. Required for compliance when tag_policy_enabled is true."
+
+  validation {
+    condition     = var.bu == null ? true : contains(["harness", "split", "traceable"], lower(var.bu))
+    error_message = "BU must be one of: harness, split, traceable (lowercase)."
+  }
 }
 
 variable "cost_center" {
   type        = string
   default     = null
-  description = "Cost center code for billing and financial tracking. Required for compliance when tag_policy_enabled is true."
+  description = "Cost center for billing and financial tracking. Required for compliance when tag_policy_enabled is true. For Engineering: PROD=saas_ops, R&D=engineering_dev."
 
   validation {
-    condition     = var.cost_center == null ? true : can(regex("^[A-Z0-9]{3,10}$", var.cost_center))
-    error_message = "Cost center must be 3-10 uppercase alphanumeric characters."
+    condition     = var.cost_center == null ? true : can(regex("^[a-z0-9_]+$", var.cost_center))
+    error_message = "Cost center must be lowercase alphanumeric with underscores only."
   }
 }
 
+variable "module" {
+  type        = string
+  default     = null
+  description = "Module that owns this resource (e.g., ccm, pl, pie). Required for compliance when tag_policy_enabled is true."
+
+  validation {
+    condition     = var.module == null ? true : can(regex("^[a-z0-9_-]+$", var.module))
+    error_message = "Module must be lowercase alphanumeric with underscores and hyphens only."
+  }
+}
+
+variable "team" {
+  type        = string
+  default     = null
+  description = "Team who owns the resource (e.g., sre, cs, pie, gitops, ffm-green). Required for compliance when tag_policy_enabled is true. Team must be registered with ENGOPS."
+
+  validation {
+    condition     = var.team == null ? true : can(regex("^[a-z0-9_-]+$", var.team))
+    error_message = "Team must be lowercase alphanumeric with underscores and hyphens only."
+  }
+}
+
+variable "env" {
+  type        = string
+  default     = null
+  description = "Environment type. Required for compliance when tag_policy_enabled is true. Values: prod (customer-facing), setup (business impact), dev (sandbox/no-SLA)."
+
+  validation {
+    condition     = var.env == null ? true : contains(["prod", "setup", "dev", "pov", "qa"], lower(var.env))
+    error_message = "Environment must be one of: prod, setup, dev, pov, qa (lowercase)."
+  }
+}
+
+# Optional Tags (RFC)
 variable "owner" {
   type        = string
   default     = null
-  description = "Email address of the resource owner. Required for compliance when tag_policy_enabled is true."
+  description = "Optional. Email address or username of the resource owner (e.g., chris_ham, christopher.ham@harness.io)."
 
   validation {
-    condition     = var.owner == null ? true : can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", var.owner))
-    error_message = "Owner must be a valid email address."
+    condition     = var.owner == null ? true : can(regex("^[a-z0-9._@-]+$", var.owner))
+    error_message = "Owner must be lowercase alphanumeric with dots, underscores, @ symbols, and hyphens only."
   }
 }
 
-variable "project" {
+variable "uuid" {
   type        = string
   default     = null
-  description = "Project identifier for resource organization and billing. Required for compliance when tag_policy_enabled is true."
+  description = "Optional. UUIDv7 preferred. Reserved for future use/external reference."
 
   validation {
-    condition     = var.project == null ? true : can(regex("^[a-z0-9-]{2,30}$", var.project))
-    error_message = "Project must be 2-30 lowercase alphanumeric characters with hyphens."
+    condition     = var.uuid == null ? true : can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.uuid))
+    error_message = "UUID must be a valid UUID format (lowercase)."
   }
 }
 
-variable "data_classification" {
+variable "expected_end_date" {
   type        = string
   default     = null
-  description = "Data classification level for security and compliance."
+  description = "Optional. ISO-8601 date format (YYYY-MM-DD). Sets maximum duration for the resource - will be auto-shutdown after this date."
 
   validation {
-    condition     = var.data_classification == null ? true : contains(["public", "internal", "confidential", "restricted"], lower(var.data_classification))
-    error_message = "Data classification must be one of: public, internal, confidential, restricted."
+    condition     = var.expected_end_date == null ? true : can(regex("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", var.expected_end_date))
+    error_message = "Expected end date must be in ISO-8601 format: YYYY-MM-DD."
   }
 }
 
-variable "backup_required" {
-  type        = bool
-  default     = null
-  description = "Whether backup is required for this resource. Used for backup policy enforcement."
-}
-
-variable "compliance_scope" {
-  type        = set(string)
-  default     = []
-  description = <<-EOT
-    Set of compliance frameworks this resource must adhere to.
-    Common values: sox, pci, hipaa, gdpr, iso27001, etc.
-    EOT
-
-  validation {
-    condition = alltrue([
-      for scope in var.compliance_scope :
-      can(regex("^[a-z0-9-]+$", scope))
-    ])
-    error_message = "Compliance scope values must be lowercase alphanumeric with hyphens."
-  }
-}
-
-variable "business_unit" {
+variable "reason" {
   type        = string
   default     = null
-  description = "Business unit responsible for the resource."
+  description = "Optional. Free-form description of the resource purpose. Jira ticket IDs preferred (e.g., engops-123, integration_testing, customer_pov)."
 
   validation {
-    condition     = var.business_unit == null ? true : can(regex("^[A-Za-z0-9-_\\s]{2,50}$", var.business_unit))
-    error_message = "Business unit must be 2-50 characters, alphanumeric with hyphens, underscores, and spaces."
-  }
-}
-
-variable "created_by" {
-  type        = string
-  default     = null
-  description = "User or system that created the resource. Automatically populated if not provided."
-}
-
-variable "managed_by" {
-  type        = string
-  default     = "terraform"
-  description = "Tool or system managing this resource."
-
-  validation {
-    condition     = contains(["terraform", "ansible", "manual", "cloudformation", "pulumi"], lower(var.managed_by))
-    error_message = "Managed by must be one of: terraform, ansible, manual, cloudformation, pulumi."
+    condition     = var.reason == null ? true : can(regex("^[a-z0-9_-]+$", var.reason))
+    error_message = "Reason must be lowercase alphanumeric with underscores and hyphens only."
   }
 }
 
@@ -344,7 +340,7 @@ variable "tag_policy_exceptions" {
   default     = []
   description = <<-EOT
     Set of tag policy rules to skip for this resource.
-    Use sparingly and only when justified. Common exceptions: 
-    'required_tags', 'cost_center_validation', 'owner_validation'
+    Use sparingly and only when justified. Valid exceptions: 
+    'bu_validation', 'cost_center_validation', 'module_validation', 'team_validation', 'env_validation'
     EOT
 }

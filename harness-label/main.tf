@@ -110,25 +110,22 @@ locals {
 
   additional_tag_map = merge(var.context.additional_tag_map, var.additional_tag_map)
 
-  # Cloud Tag Policy Implementation
-  policy_required_tags = var.tag_policy_enabled && !contains(var.tag_policy_exceptions, "required_tags") ? {
-    for k, v in var.required_tags : k => v if v != null && v != ""
-  } : {}
+  # RFC Cloud Tag Policy Implementation (ALL LOWERCASE)
+  policy_required_tags = var.tag_policy_enabled ? merge(
+    # Required RFC tags
+    var.bu != null && !contains(var.tag_policy_exceptions, "bu_validation") ? { "bu" = lower(var.bu) } : {},
+    var.cost_center != null && !contains(var.tag_policy_exceptions, "cost_center_validation") ? { "cost-center" = lower(var.cost_center) } : {},
+    var.module != null && !contains(var.tag_policy_exceptions, "module_validation") ? { "module" = lower(var.module) } : {},
+    var.team != null && !contains(var.tag_policy_exceptions, "team_validation") ? { "team" = lower(var.team) } : {},
+    var.env != null && !contains(var.tag_policy_exceptions, "env_validation") ? { "env" = lower(var.env) } : {}
+  ) : {}
 
   policy_compliance_tags = var.tag_policy_enabled ? merge(
-    # Standard policy tags
-    var.cost_center != null ? { "CostCenter" = var.cost_center } : {},
-    var.owner != null ? { "Owner" = var.owner } : {},
-    var.project != null ? { "Project" = var.project } : {},
-    var.data_classification != null ? { "DataClassification" = title(lower(var.data_classification)) } : {},
-    var.backup_required != null ? { "BackupRequired" = tostring(var.backup_required) } : {},
-    var.business_unit != null ? { "BusinessUnit" = var.business_unit } : {},
-    var.created_by != null ? { "CreatedBy" = var.created_by } : {},
-    var.managed_by != null ? { "ManagedBy" = title(lower(var.managed_by)) } : {},
-    length(var.compliance_scope) > 0 ? { "ComplianceScope" = join(",", sort(var.compliance_scope)) } : {},
-    # Automatic timestamps
-    { "CreatedDate" = formatdate("YYYY-MM-DD", timestamp()) },
-    { "LastModified" = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp()) }
+    # Optional RFC tags (only include if provided)
+    var.owner != null ? { "owner" = lower(var.owner) } : {},
+    var.uuid != null ? { "uuid" = lower(var.uuid) } : {},
+    var.expected_end_date != null ? { "expected-end-date" = var.expected_end_date } : {},
+    var.reason != null ? { "reason" = lower(var.reason) } : {}
   ) : {}
 
   # Merge all tags: generated -> policy required -> policy compliance -> user input
@@ -193,23 +190,14 @@ locals {
   id       = local.id_length_limit != 0 && length(local.id_full) > local.id_length_limit ? local.id_short : local.id_full
 
 
-  # Tag Policy Validation and Compliance Checks
+  # RFC Tag Policy Validation and Compliance Checks
   policy_validation_results = var.tag_policy_enabled ? {
-    # Check for required policy tags
-    cost_center_missing = !contains(var.tag_policy_exceptions, "cost_center_validation") && var.cost_center == null
-    owner_missing       = !contains(var.tag_policy_exceptions, "owner_validation") && var.owner == null
-    project_missing     = !contains(var.tag_policy_exceptions, "project_validation") && var.project == null
-
-    # Check for required tag completeness
-    required_tags_missing = [
-      for tag_key, tag_value in var.required_tags : tag_key
-      if !contains(keys(local.tags), tag_key) && !contains(var.tag_policy_exceptions, "required_tags")
-    ]
-
-    # Compliance scope validation
-    compliance_scope_valid = alltrue([
-      for scope in var.compliance_scope : contains(["sox", "pci", "hipaa", "gdpr", "iso27001", "fedramp", "ccpa"], scope)
-    ])
+    # Check for RFC required policy tags
+    bu_missing           = !contains(var.tag_policy_exceptions, "bu_validation") && var.bu == null
+    cost_center_missing  = !contains(var.tag_policy_exceptions, "cost_center_validation") && var.cost_center == null
+    module_missing       = !contains(var.tag_policy_exceptions, "module_validation") && var.module == null
+    team_missing         = !contains(var.tag_policy_exceptions, "team_validation") && var.team == null
+    env_missing          = !contains(var.tag_policy_exceptions, "env_validation") && var.env == null
 
     # Tag count limits (AWS has 50 tag limit)
     tag_count_compliant        = length(keys(local.tags)) <= 50
@@ -217,23 +205,23 @@ locals {
     tag_value_length_compliant = alltrue([for v in values(local.tags) : length(v) <= 256])
   } : {
     # Include same attributes with default values when tag policy is disabled
+    bu_missing          = false
     cost_center_missing = false
-    owner_missing       = false
-    project_missing     = false
-    required_tags_missing = []
-    compliance_scope_valid = true
+    module_missing      = false
+    team_missing        = false
+    env_missing         = false
     tag_count_compliant    = true
     tag_key_length_compliant   = true
     tag_value_length_compliant = true
   }
 
-  # Policy compliance status
+  # RFC Policy compliance status
   policy_compliant = var.tag_policy_enabled ? (
+    !local.policy_validation_results.bu_missing &&
     !local.policy_validation_results.cost_center_missing &&
-    !local.policy_validation_results.owner_missing &&
-    !local.policy_validation_results.project_missing &&
-    length(local.policy_validation_results.required_tags_missing) == 0 &&
-    local.policy_validation_results.compliance_scope_valid &&
+    !local.policy_validation_results.module_missing &&
+    !local.policy_validation_results.team_missing &&
+    !local.policy_validation_results.env_missing &&
     local.policy_validation_results.tag_count_compliant &&
     local.policy_validation_results.tag_key_length_compliant &&
     local.policy_validation_results.tag_value_length_compliant

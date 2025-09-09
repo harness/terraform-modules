@@ -93,7 +93,7 @@ output "normalized_context" {
 }
 
 output "context" {
-  value       = local.input
+  value       = local.output_context
   description = <<-EOT
   Merged but otherwise unmodified input to this module, to be used as context input to other modules.
   Note: this version will have null values as defaults, not the values actually used as defaults.
@@ -102,7 +102,7 @@ EOT
 
 # Cloud Tag Policy Outputs
 output "tag_policy_enabled" {
-  value       = var.tag_policy_enabled
+  value       = local.input.tag_policy_enabled
   description = "Whether tag policy compliance enforcement is enabled"
 }
 
@@ -128,7 +128,7 @@ output "policy_compliance_tags" {
 
 
 output "tag_policy_exceptions" {
-  value       = var.tag_policy_exceptions
+  value       = local.input.tag_policy_exceptions
   description = "Policy rules that were skipped for this resource"
 }
 

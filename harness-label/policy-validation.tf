@@ -3,32 +3,32 @@
 
 # Validation: Required policy tags must be provided when policy is enabled
 resource "terraform_data" "policy_validation" {
-  count = var.tag_policy_enabled ? 1 : 0
+  count = local.input.tag_policy_enabled ? 1 : 0
 
   lifecycle {
     # RFC Required Tags Validation
     precondition {
-      condition     = !contains(var.tag_policy_exceptions, "bu_validation") ? var.bu != null : true
+      condition     = !contains(local.input.tag_policy_exceptions, "bu_validation") ? local.input.bu != null : true
       error_message = "Business Unit (bu) is required when tag policy is enabled. Set var.bu or add 'bu_validation' to tag_policy_exceptions."
     }
 
     precondition {
-      condition     = !contains(var.tag_policy_exceptions, "cost_center_validation") ? var.cost_center != null : true
+      condition     = !contains(local.input.tag_policy_exceptions, "cost_center_validation") ? local.input.cost_center != null : true
       error_message = "Cost center is required when tag policy is enabled. Set var.cost_center or add 'cost_center_validation' to tag_policy_exceptions."
     }
 
     precondition {
-      condition     = !contains(var.tag_policy_exceptions, "module_validation") ? var.module != null : true
+      condition     = !contains(local.input.tag_policy_exceptions, "module_validation") ? local.input.module != null : true
       error_message = "Module is required when tag policy is enabled. Set var.module or add 'module_validation' to tag_policy_exceptions."
     }
 
     precondition {
-      condition     = !contains(var.tag_policy_exceptions, "team_validation") ? var.team != null : true
+      condition     = !contains(local.input.tag_policy_exceptions, "team_validation") ? local.input.team != null : true
       error_message = "Team is required when tag policy is enabled. Set var.team or add 'team_validation' to tag_policy_exceptions."
     }
 
     precondition {
-      condition     = !contains(var.tag_policy_exceptions, "env_validation") ? var.env != null : true
+      condition     = !contains(local.input.tag_policy_exceptions, "env_validation") ? local.input.env != null : true
       error_message = "Environment (env) is required when tag policy is enabled. Set var.env or add 'env_validation' to tag_policy_exceptions."
     }
 
@@ -56,7 +56,7 @@ resource "terraform_data" "policy_validation" {
 # Optional: Policy compliance check that warns but doesn't fail
 check "tag_policy_compliance" {
   assert {
-    condition     = var.tag_policy_enabled ? local.policy_compliant : true
+    condition     = local.input.tag_policy_enabled ? local.policy_compliant : true
     error_message = "Resource does not meet tag policy compliance requirements. Check policy_validation_results output for details."
   }
 }

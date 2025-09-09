@@ -66,6 +66,19 @@ locals {
 
     descriptor_formats = merge(lookup(var.context, "descriptor_formats", {}), var.descriptor_formats)
     labels_as_tags     = local.context_labels_as_tags_is_unset ? var.labels_as_tags : var.context.labels_as_tags
+    
+    # Include validation variables with context inheritance
+    bu                = var.bu == null ? lookup(var.context, "bu", null) : var.bu
+    cost_center       = var.cost_center == null ? lookup(var.context, "cost_center", null) : var.cost_center
+    module            = var.module == null ? lookup(var.context, "module", null) : var.module
+    team              = var.team == null ? lookup(var.context, "team", null) : var.team
+    env               = var.env == null ? lookup(var.context, "env", null) : var.env
+    owner             = var.owner == null ? lookup(var.context, "owner", null) : var.owner
+    uuid              = var.uuid == null ? lookup(var.context, "uuid", null) : var.uuid
+    expected_end_date = var.expected_end_date == null ? lookup(var.context, "expected_end_date", null) : var.expected_end_date
+    reason            = var.reason == null ? lookup(var.context, "reason", null) : var.reason
+    tag_policy_enabled    = var.tag_policy_enabled == null ? lookup(var.context, "tag_policy_enabled", true) : var.tag_policy_enabled
+    tag_policy_exceptions = var.tag_policy_exceptions == null ? lookup(var.context, "tag_policy_exceptions", []) : var.tag_policy_exceptions
   }
 
 
@@ -111,21 +124,21 @@ locals {
   additional_tag_map = merge(var.context.additional_tag_map, var.additional_tag_map)
 
   # RFC Cloud Tag Policy Implementation (ALL LOWERCASE)
-  policy_required_tags = var.tag_policy_enabled ? merge(
+  policy_required_tags = local.input.tag_policy_enabled ? merge(
     # Required RFC tags
-    var.bu != null && !contains(var.tag_policy_exceptions, "bu_validation") ? { "bu" = lower(var.bu) } : {},
-    var.cost_center != null && !contains(var.tag_policy_exceptions, "cost_center_validation") ? { "cost-center" = lower(var.cost_center) } : {},
-    var.module != null && !contains(var.tag_policy_exceptions, "module_validation") ? { "module" = lower(var.module) } : {},
-    var.team != null && !contains(var.tag_policy_exceptions, "team_validation") ? { "team" = lower(var.team) } : {},
-    var.env != null && !contains(var.tag_policy_exceptions, "env_validation") ? { "env" = lower(var.env) } : {}
+    local.input.bu != null && !contains(local.input.tag_policy_exceptions, "bu_validation") ? { "bu" = lower(local.input.bu) } : {},
+    local.input.cost_center != null && !contains(local.input.tag_policy_exceptions, "cost_center_validation") ? { "cost-center" = lower(local.input.cost_center) } : {},
+    local.input.module != null && !contains(local.input.tag_policy_exceptions, "module_validation") ? { "module" = lower(local.input.module) } : {},
+    local.input.team != null && !contains(local.input.tag_policy_exceptions, "team_validation") ? { "team" = lower(local.input.team) } : {},
+    local.input.env != null && !contains(local.input.tag_policy_exceptions, "env_validation") ? { "env" = lower(local.input.env) } : {}
   ) : {}
 
-  policy_compliance_tags = var.tag_policy_enabled ? merge(
+  policy_compliance_tags = local.input.tag_policy_enabled ? merge(
     # Optional RFC tags (only include if provided)
-    var.owner != null ? { "owner" = lower(var.owner) } : {},
-    var.uuid != null ? { "uuid" = lower(var.uuid) } : {},
-    var.expected_end_date != null ? { "expected-end-date" = var.expected_end_date } : {},
-    var.reason != null ? { "reason" = lower(var.reason) } : {}
+    local.input.owner != null ? { "owner" = lower(local.input.owner) } : {},
+    local.input.uuid != null ? { "uuid" = lower(local.input.uuid) } : {},
+    local.input.expected_end_date != null ? { "expected-end-date" = local.input.expected_end_date } : {},
+    local.input.reason != null ? { "reason" = lower(local.input.reason) } : {}
   ) : {}
 
   # Merge all tags: generated -> policy required -> policy compliance -> user input
@@ -191,13 +204,13 @@ locals {
 
 
   # RFC Tag Policy Validation and Compliance Checks
-  policy_validation_results = var.tag_policy_enabled ? {
+  policy_validation_results = local.input.tag_policy_enabled ? {
     # Check for RFC required policy tags
-    bu_missing           = !contains(var.tag_policy_exceptions, "bu_validation") && var.bu == null
-    cost_center_missing  = !contains(var.tag_policy_exceptions, "cost_center_validation") && var.cost_center == null
-    module_missing       = !contains(var.tag_policy_exceptions, "module_validation") && var.module == null
-    team_missing         = !contains(var.tag_policy_exceptions, "team_validation") && var.team == null
-    env_missing          = !contains(var.tag_policy_exceptions, "env_validation") && var.env == null
+    bu_missing           = !contains(local.input.tag_policy_exceptions, "bu_validation") && local.input.bu == null
+    cost_center_missing  = !contains(local.input.tag_policy_exceptions, "cost_center_validation") && local.input.cost_center == null
+    module_missing       = !contains(local.input.tag_policy_exceptions, "module_validation") && local.input.module == null
+    team_missing         = !contains(local.input.tag_policy_exceptions, "team_validation") && local.input.team == null
+    env_missing          = !contains(local.input.tag_policy_exceptions, "env_validation") && local.input.env == null
 
     # Tag count limits (AWS has 50 tag limit)
     tag_count_compliant        = length(keys(local.tags)) <= 50
@@ -216,7 +229,7 @@ locals {
   }
 
   # RFC Policy compliance status
-  policy_compliant = var.tag_policy_enabled ? (
+  policy_compliant = local.input.tag_policy_enabled ? (
     !local.policy_validation_results.bu_missing &&
     !local.policy_validation_results.cost_center_missing &&
     !local.policy_validation_results.module_missing &&
@@ -247,9 +260,19 @@ locals {
     labels_as_tags      = local.labels_as_tags
     descriptor_formats  = local.descriptor_formats
     # Include policy context
-    tag_policy_enabled    = var.tag_policy_enabled
+    tag_policy_enabled    = local.input.tag_policy_enabled
     policy_compliant      = local.policy_compliant
-    tag_policy_exceptions = var.tag_policy_exceptions
+    tag_policy_exceptions = local.input.tag_policy_exceptions
+    # Include all validation variables for child modules
+    bu                = local.input.bu
+    cost_center       = local.input.cost_center
+    module            = local.input.module
+    team              = local.input.team
+    env               = local.input.env
+    owner             = local.input.owner
+    uuid              = local.input.uuid
+    expected_end_date = local.input.expected_end_date
+    reason            = local.input.reason
   }
 
 }

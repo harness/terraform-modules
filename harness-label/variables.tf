@@ -25,6 +25,18 @@ variable "context" {
     # by setting `labels_as_tags` to `[]`, so we need
     # a different sentinel to indicate "default"
     labels_as_tags = ["unset"]
+    # RFC Tag Policy variables
+    tag_policy_enabled    = null
+    tag_policy_exceptions = null
+    bu                    = null
+    cost_center           = null
+    module                = null
+    team                  = null
+    env                   = null
+    owner                 = null
+    uuid                  = null
+    expected_end_date     = null
+    reason                = null
   }
   description = <<-EOT
     Single object for setting entire context at once.

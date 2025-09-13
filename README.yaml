@@ -1,0 +1,123 @@
+# terraform-modules Terraform Module Documentation
+name: "terraform-modules"
+description: >
+  Terraform module for managing modules resources
+
+# Feature highlights
+highlights:
+  - text: "🚀 New: This module includes comprehensive **pre-commit integration** for automated code quality, security scanning, and documentation."
+    link: "#-development--code-quality"
+# Badges (optional)
+badges:
+  - name: "Harness Enterprise"
+    image: "https://img.shields.io/badge/Harness-Enterprise-orange.svg?style=for-the-badge"
+    url: "{{MODULE_REPO_URL}}"
+# Usage examples
+usage:
+  - name: "Basic Usage"
+    description: "Simple configuration with minimal required variables"
+    code: |
+      module "terraform_modules" {
+        source = "{{MODULE_SOURCE}}"
+
+        # Required variables
+        namespace   = "harness"
+        environment = "dev"
+        name        = "example"
+
+        # Module-specific configuration
+        # TODO: Add example configuration
+
+        tags = {
+          Project = "MyProject"
+          Owner   = "team@harness.io"
+        }
+      }
+  - name: "Enterprise Configuration"
+    description: "Production setup with enterprise features and compliance"
+    code: |
+      module "terraform_modules" {
+        source = "{{MODULE_SOURCE}}"
+
+        # Label configuration
+        namespace   = "harness"
+        environment = "prod"
+        stage       = "production"
+        name        = "main"
+
+        # Enterprise tagging and compliance
+        tag_policy_enabled = true
+        cost_center        = "engineering"
+        owner              = "platform-team@harness.io"
+        bu                 = "engineering"
+        team               = "platform"
+
+        # TODO: Add enterprise configuration examples
+
+        tags = {
+          Project     = "ProductionSystem"
+          Compliance  = "SOC2"
+          Environment = "Production"
+        }
+      }
+# Development and code quality section
+development:
+  title: "🔧 Development & Code Quality"
+  description: "This module includes comprehensive code quality tools to ensure consistent, secure, and maintainable Terraform code."
+  precommit:
+    enabled: true
+    features:
+      - "✅ **Formats** Terraform code with `terraform fmt`"
+      - "✅ **Validates** Terraform syntax and configuration"
+      - "✅ **Lints** code with TFLint for best practices"
+      - "✅ **Scans** for security issues with Trivy and Checkov"
+      - "✅ **Detects** secrets and sensitive data"
+      - "✅ **Generates** documentation automatically"
+      - "✅ **Enforces** organizational standards"
+    setup: |
+      ```bash
+      # Install pre-commit and all tools
+      make install-tools
+
+      # Install hooks (one-time setup)
+      make pre-commit-install
+
+      # Run checks manually (optional)
+      make pre-commit
+      ```
+    benefits:
+      - "**🛡️ Security First**: Catch security issues before they reach production"
+      - "**⚡ Faster Reviews**: Code arrives pre-validated and formatted"
+      - "**📚 Auto Documentation**: Terraform docs stay up-to-date automatically"
+      - "**🎯 Consistent Standards**: Enforce team coding practices across all modules"
+      - "**🔍 Early Bug Detection**: Find issues before CI/CD"
+    tip: "💡 Pro Tip: Once installed, pre-commit runs automatically on every `git commit`. No extra steps needed!"
+    docs_link: "docs/PRE-COMMIT.md"
+# Examples directory references
+examples:
+  - name: "Basic Example"
+    description: "Simple configuration with minimal setup"
+    url: "./examples/basic/"
+  - name: "Complete Example"
+    description: "Full enterprise setup with all features"
+    url: "./examples/complete/"
+# Related Harness modules (optional)
+related:
+  - name: "harness-label"
+    url: "https://github.com/harness/terraform-modules/tree/main/harness-label"
+    description: "Harness labeling module for consistent resource naming and tagging"
+# Contributors
+contributors:
+  - name: "Harness Team"
+    email: "devops@harness.io"
+    github: "harness"
+    avatar: "https://github.com/harness.png"
+# License
+license: |
+  ## License
+
+  This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
+
+  ## Support
+
+  For support, please contact the Harness DevOps team or create an issue in this repository.

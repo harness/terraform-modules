@@ -22,11 +22,11 @@ resource "google_secret_manager_secret" "this" {
   project = var.project
   replication {
     user_managed {
-      replicas {
-        location = "us-central1"
-      }
-      replicas {
-        location = "us-east1"
+      dynamic "replicas" {
+        for_each = var.replication_regions
+        content {
+          location = replicas.value
+        }
       }
     }
   }

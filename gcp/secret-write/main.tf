@@ -1,9 +1,12 @@
-/*
-provider "google" {
-  project = var.project
-  region  = var.region
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = ">= 4.0"
+    }
+  }
 }
-*/
 
 module "labels" {
   source           = "git::https://github.com/harness/terraform-modules.git//label"
@@ -20,13 +23,24 @@ resource "google_secret_manager_secret" "this" {
   ## labels in gcp MUST be lower case, hence the use of the label module
   labels  = module.labels.tags
   project = var.project
-  replication {
-    user_managed {
-      replicas {
-        location = "us-central1"
-      }
-      replicas {
-        location = "us-east1"
+
+  dynamic "replication" {
+    for_each = var.replication_policy == "automatic" ? [1] : []
+    content {
+      automatic = true
+    }
+  }
+
+  dynamic "replication" {
+    for_each = var.replication_policy == "user_managed" ? [1] : []
+    content {
+      user_managed {
+        dynamic "replicas" {
+          for_each = var.replica_locations
+          content {
+            location = replicas.value
+          }
+        }
       }
     }
   }

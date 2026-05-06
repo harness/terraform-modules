@@ -27,7 +27,7 @@ resource "google_secret_manager_secret" "this" {
   dynamic "replication" {
     for_each = var.replication_policy == "automatic" ? [1] : []
     content {
-      automatic {}
+      auto {}
     }
   }
 

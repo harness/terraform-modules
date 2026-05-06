@@ -4,11 +4,6 @@ output "id" {
   value       = module.this.id
 }
 
-output "name" {
-  description = "Normalized name of the secret"
-  value       = module.this.name
-}
-
 output "namespace" {
   description = "Normalized namespace"
   value       = module.this.namespace
